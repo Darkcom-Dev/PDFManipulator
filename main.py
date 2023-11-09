@@ -22,7 +22,7 @@ def version():
 
 parser = argparse.ArgumentParser(description="Split or Join PDF")
 
-def split(file, page, output):
+def split(file, page, *output):
     print("Splitting PDF")
     print(f'file: {file}, page: {page}')
     print(f'output: {output}')
@@ -37,8 +37,16 @@ def split(file, page, output):
         for i in range(0, page):
             pdf_writer.add_page(pages[i])
 
-        with open(output, "wb") as f:
+        pdf_writer_2 = pdf.PdfWriter()
+
+        for j in range(page, len(pages)):
+            pdf_writer_2.add_page(pages[j])
+
+        with open(output[0], "wb") as f:
             pdf_writer.write(f)
+
+        with open(output[1], "wb") as f:
+            pdf_writer_2.write(f)
         # page_data = pdfile.reader.pages(list(page))
         # print(page_data.extract_text())
 
@@ -50,9 +58,9 @@ def join(output, *files):
     print(f'output: {output}')
 
     merger = pdf.PdfMerger()
-
     for file in files:
-        merger.append(file)
+        pdffile = pdf.PdfReader(open(file,'rb'))
+        merger.append(pdffile)
 
     with open(output, 'wb') as f:
         merger.write(f)
@@ -60,15 +68,16 @@ def join(output, *files):
     merger.close()
 
 def main():
-    join("output.pdf", ("UC-28.pdf", "UC-86.pdf"))
+    #split("Scrum.pdf", 2 ,"SCR1.pdf", "SCR2.pdf")
+    pass
 
 
-if __name__ == "__maini__":
+if __name__ == "__main__":
     parser.add_argument(
-        "-i", "--input", nargs="+", help="Input PDF file", required=True
+        "-i", "--input", nargs="+", help="Input PDF file(s)", required=True
     )
     parser.add_argument(
-        "-o", "--output", help="Output PDF file", required=True
+        "-o", "--output", nargs="+", help="Output PDF file(s)", required=True
     )
     parser.add_argument(
         "-s", "--split", help="Split PDF", action="store_true"
@@ -94,11 +103,38 @@ if __name__ == "__maini__":
     args = parser.parse_args()
 
     if args.split:
-        split(args.input, args.page, args.output)
+        if not args.output:
+            print("Please specify an output file")
+            main()
+        if type(args.output) != list:
+            print("Please specify an output file")
+            main()
+        if type(args.page) != int:
+            print("Please specify a page integer")
+            main()
+        else:
+            split(args.input[0], args.page, *args.output)
     elif args.join:
-        join(args.input, args.output)
+        if not args.output:
+            print("Please specify an output file")
+            main()
+        if type(args.output) != list:
+            print("Please specify an output file")
+            main()
+        else:
+            join(args.output[0], *args.input)
     elif args.get_info:
-        get_info(args.input)
+        get_info(args.input[0])
     
-    if __name__ == "__main__":
-        main()
+if __name__ == "__maini__":
+    """
+    parser.add_argument(
+        "-i", "--input", nargs="+", help="Input PDF file(s)", required=True
+    )
+    parser.add_argument(
+        "-o", "--output", nargs="+", help="Output PDF file(s)", required=True
+    )
+    args = parser.parse_args()
+    #join(args.output[0], *args.input)
+    """
+    main()
