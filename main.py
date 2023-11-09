@@ -22,7 +22,38 @@ def version():
 
 parser = argparse.ArgumentParser(description="Split or Join PDF")
 
+def save_part(pages, start, end, output_file):
+    """
+    Save a range of pages from a list of pages to a PDF file.
+
+    Parameters:
+        pages (list): A list of pages to be saved.
+        start (int): The index of the first page to be saved.
+        end (int): The index of the last page to be saved (exclusive).
+        output_file (str): The path to the output PDF file.
+
+    Returns:
+        None
+    """
+    pdf_writer = pdf.PdfWriter()
+
+    for i in range(start, end):
+        pdf_writer.add_page(pages[i])
+    with open(output_file, "wb") as f:
+        pdf_writer.write(f)
+
 def split(file, page, *output):
+    """
+    Split a PDF file into two parts based on the given page number.
+
+    Args:
+        file (str): The path to the PDF file.
+        page (int): The page number at which to split the PDF file.
+        output (tuple): A tuple containing the paths to save the two parts of the PDF file.
+    
+    Returns:
+        None
+    """
     print("Splitting PDF")
     print(f'file: {file}, page: {page}')
     print(f'output: {output}')
@@ -30,29 +61,23 @@ def split(file, page, *output):
     with open(file, "rb") as f:
         pdfile = pdf.PdfReader(f)
         pages = pdfile.pages
-        # print(pages[page].extract_text())
 
-        pdf_writer = pdf.PdfWriter()
-
-        for i in range(0, page):
-            pdf_writer.add_page(pages[i])
-
-        pdf_writer_2 = pdf.PdfWriter()
-
-        for j in range(page, len(pages)):
-            pdf_writer_2.add_page(pages[j])
-
-        with open(output[0], "wb") as f:
-            pdf_writer.write(f)
-
-        with open(output[1], "wb") as f:
-            pdf_writer_2.write(f)
-        # page_data = pdfile.reader.pages(list(page))
-        # print(page_data.extract_text())
+        save_part(pages, 0, page, output[0])
+        save_part(pages, page, len(pages), output[1])
 
 
 
 def join(output, *files):
+    """
+    Join multiple PDF files into a single PDF file.
+
+    Parameters:
+        output (str): The path of the output PDF file.
+        *files (str): The paths of the input PDF files.
+
+    Returns:
+        None
+    """
     print("Joining PDF")
     print(f'files: {files}')
     print(f'output: {output}')
@@ -68,7 +93,6 @@ def join(output, *files):
     merger.close()
 
 def main():
-    #split("Scrum.pdf", 2 ,"SCR1.pdf", "SCR2.pdf")
     pass
 
 
@@ -126,15 +150,4 @@ if __name__ == "__main__":
     elif args.get_info:
         get_info(args.input[0])
     
-if __name__ == "__maini__":
-    """
-    parser.add_argument(
-        "-i", "--input", nargs="+", help="Input PDF file(s)", required=True
-    )
-    parser.add_argument(
-        "-o", "--output", nargs="+", help="Output PDF file(s)", required=True
-    )
-    args = parser.parse_args()
-    #join(args.output[0], *args.input)
-    """
-    main()
+
