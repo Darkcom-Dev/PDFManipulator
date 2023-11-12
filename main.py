@@ -1,10 +1,10 @@
-import PyPDF2 as pdf
-import os
+import PyPDF2
+# from PIL import Image
 import argparse
 
 def get_info(file):
     with open(file, 'rb') as f:
-        pdfile = pdf.PdfReader(f)
+        pdfile = PyPDF2.PdfReader(f)
         info = pdfile.metadata
         number_of_pages = len(pdfile.pages)
         print(info)
@@ -18,7 +18,7 @@ def get_info(file):
 
 def version():
     print(f'argparse version: {argparse.__version__}')
-    print(f'PyPDF2 version: {pdf.__version__}')
+    print(f'PyPDF2 version: {PyPDF2.__version__}')
 
 parser = argparse.ArgumentParser(description="Split or Join PDF")
 
@@ -35,7 +35,7 @@ def save_part(pages, start, end, output_file):
     Returns:
         None
     """
-    pdf_writer = pdf.PdfWriter()
+    pdf_writer = PyPDF2.PdfWriter()
 
     for i in range(start, end):
         pdf_writer.add_page(pages[i])
@@ -59,14 +59,23 @@ def split(file, page, *output):
     print(f'output: {output}')
 
     with open(file, "rb") as f:
-        pdfile = pdf.PdfReader(f)
+        pdfile = PyPDF2.PdfReader(f)
         pages = pdfile.pages
 
         save_part(pages, 0, page, output[0])
         save_part(pages, page, len(pages), output[1])
-
-
-
+"""
+def convert_img_to_pdf(file, output):
+    image = Image.open(file)
+    image_rgb = image.convert('RGB')
+    print(image.width, image.height)
+    pdffile = PyPDF2.PdfWriter()
+    page = pdffile.add_blank_page(width=image.width, height=image.height)
+    page.merge_page(image)
+    #pdffile.add_page(page)
+    with open(output, 'wb') as f:
+        pdffile.write(f)
+"""
 def join(output, *files):
     """
     Join multiple PDF files into a single PDF file.
@@ -82,9 +91,9 @@ def join(output, *files):
     print(f'files: {files}')
     print(f'output: {output}')
 
-    merger = pdf.PdfMerger()
+    merger = PyPDF2.PdfMerger()
     for file in files:
-        pdffile = pdf.PdfReader(open(file,'rb'))
+        pdffile = PyPDF2.PdfReader(open(file,'rb'))
         merger.append(pdffile)
 
     with open(output, 'wb') as f:
@@ -108,6 +117,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-j", "--join", help="Join PDF", action="store_true"
+    )
+    parser.add_argument(
+        "-c", "--convert", help="Convert image to PDF", action="store_true"
     )
     parser.add_argument(
         "-n", "--number", help="Number of pages to split", type=int
@@ -149,5 +161,16 @@ if __name__ == "__main__":
             join(args.output[0], *args.input)
     elif args.get_info:
         get_info(args.input[0])
+    """
+    elif args.convert:
+        if not args.output:
+            print("Please specify an output file")
+            main()
+        if type(args.output) != list:
+            print("Please specify an output file")
+            main()
+        else:
+            convert_img_to_pdf(args.input[0], args.output[0])
+    """
     
 
