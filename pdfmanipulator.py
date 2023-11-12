@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import PyPDF2
 # from PIL import Image
 import argparse
@@ -101,76 +103,63 @@ def join(output, *files):
 
     merger.close()
 
-def main():
-    pass
-
-
-if __name__ == "__main__":
-    parser.add_argument(
-        "-i", "--input", nargs="+", help="Input PDF file(s)", required=True
-    )
-    parser.add_argument(
-        "-o", "--output", nargs="+", help="Output PDF file(s)", required=True
-    )
-    parser.add_argument(
-        "-s", "--split", help="Split PDF", action="store_true"
-    )
-    parser.add_argument(
-        "-j", "--join", help="Join PDF", action="store_true"
-    )
-    parser.add_argument(
-        "-c", "--convert", help="Convert image to PDF", action="store_true"
-    )
-    parser.add_argument(
-        "-n", "--number", help="Number of pages to split", type=int
-    )
-    parser.add_argument(
-        "-l", "--length", help="Length of each page", type=int
-    )
-    parser.add_argument(
-        "-p", "--page", help="Page to split", type=int
-    )
-    parser.add_argument(
-        "-v", "--version", action="version", version=version
-    )
-    parser.add_argument(
-        "-g", "--get_info", action="store_true", help="Get info from PDF"
-    )
-    args = parser.parse_args()
-
-    if args.split:
-        if not args.output:
-            print("Please specify an output file")
-            main()
-        if type(args.output) != list:
-            print("Please specify an output file")
-            main()
-        if type(args.page) != int:
-            print("Please specify a page integer")
-            main()
-        else:
-            split(args.input[0], args.page, *args.output)
-    elif args.join:
-        if not args.output:
-            print("Please specify an output file")
-            main()
-        if type(args.output) != list:
-            print("Please specify an output file")
-            main()
-        else:
-            join(args.output[0], *args.input)
-    elif args.get_info:
-        get_info(args.input[0])
-    """
-    elif args.convert:
-        if not args.output:
-            print("Please specify an output file")
-            main()
-        if type(args.output) != list:
-            print("Please specify an output file")
-            main()
-        else:
-            convert_img_to_pdf(args.input[0], args.output[0])
-    """
-    
-
+parser.add_argument(
+    "-i", "--input", nargs="+", help="Input PDF file(s)", required=True
+)
+parser.add_argument(
+    "-o", "--output", nargs="+", help="Output PDF file(s)", required=True
+)
+parser.add_argument(
+    "-s", "--split", help="Split PDF", action="store_true"
+)
+parser.add_argument(
+    "-j", "--join", help="Join PDF", action="store_true"
+)
+parser.add_argument(
+    "-c", "--convert", help="Convert image to PDF", action="store_true"
+)
+parser.add_argument(
+    "-n", "--number", help="Number of pages to split", type=int
+)
+parser.add_argument(
+    "-l", "--length", help="Length of each page", type=int
+)
+parser.add_argument(
+    "-p", "--page", help="Page to split", type=int
+)
+parser.add_argument(
+    "-v", "--version", action="version", version=version
+)
+parser.add_argument(
+    "-g", "--get_info", action="store_true", help="Get info from PDF"
+)
+args = parser.parse_args()
+if args.split:
+    if not args.output:
+        print("Please specify an output file")
+    if type(args.output) != list:
+        print("Please specify an output file")
+    if type(args.page) != int:
+        print("Please specify a page integer")
+    else:
+        split(args.input[0], args.page, *args.output)
+elif args.join:
+    if not args.output:
+        print("Please specify an output file")
+    if type(args.output) != list:
+        print("Please specify an output file")
+    else:
+        join(args.output[0], *args.input)
+elif args.get_info:
+    get_info(args.input[0])
+"""
+elif args.convert:
+    if not args.output:
+        print("Please specify an output file")
+        main()
+    if type(args.output) != list:
+        print("Please specify an output file")
+        main()
+    else:
+        convert_img_to_pdf(args.input[0], args.output[0])
+"""
