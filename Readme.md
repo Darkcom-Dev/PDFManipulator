@@ -1,4 +1,7 @@
-# PDFSpliter_Joiner
+# PDF Manipulator
+
+## Description.
+This script allow split or merge pdf files to avoid online converters were can stealth your personal data. this project will pretend to be lite.
 
 ## ToDo:
-- Hacer un metodo para convertir una o varias imagenes a PDF
+- Make a method that converts images to PDF.
